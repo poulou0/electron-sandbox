@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, nativeImage, Menu, Notification} = require('electron')
+const {app, BrowserWindow, nativeImage, Menu, Notification, Tray} = require('electron')
 const path = require('path')
 
 let mainWindow;
@@ -47,6 +47,7 @@ function createWindow() {
   mainWindow.setMenu(menu);
 }
 
+let tray;
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -64,6 +65,27 @@ app.whenReady().then(() => {
   notification.on('click', (event, arg)=>{
     console.log("clicked")
   });
+
+  const icon = nativeImage.createFromDataURL('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNk+M9Qz0AEYBxVSF+FAAhKDveksOjmAAAAAElFTkSuQmCC');
+  tray = new Tray(icon);
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'always on top',
+      type: 'checkbox',
+      click: (v) => {
+        mainWindow.setAlwaysOnTop(v.checked, 'screen');
+      }
+    },
+    {type: 'separator'},
+    {
+      label: 'exit',
+      click: () => {
+        app.quit()
+      }
+    },
+  ]);
+  tray.setToolTip('This is my application.');
+  tray.setContextMenu(contextMenu);
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
