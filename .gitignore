@@ -1,1 +1,4 @@
 node_modules/
+electron-sandbox-darwin-x64/
+electron-sandbox-linux-x64/
+dist/
