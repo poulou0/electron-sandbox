@@ -26,6 +26,7 @@ function createWindow() {
       submenu: [
         {
           label: 'Exit', click: () => {
+            app.isQuiting = true;
             app.quit();
           }
         }
@@ -45,6 +46,15 @@ function createWindow() {
   ];
   const menu = Menu.buildFromTemplate(template);
   mainWindow.setMenu(menu);
+
+  mainWindow.on('close', function (event) {
+    if (!app.isQuiting) {
+      event.preventDefault();
+      mainWindow.hide();
+    }
+
+    return false;
+  });
 }
 
 let tray;
@@ -70,6 +80,12 @@ app.whenReady().then(() => {
   tray = new Tray(icon);
   const contextMenu = Menu.buildFromTemplate([
     {
+      label: 'show window',
+      click: (v) => {
+        mainWindow.show();
+      }
+    },
+    {
       label: 'always on top',
       type: 'checkbox',
       click: (v) => {
@@ -80,6 +96,7 @@ app.whenReady().then(() => {
     {
       label: 'exit',
       click: () => {
+        app.isQuiting = true;
         app.quit()
       }
     },
