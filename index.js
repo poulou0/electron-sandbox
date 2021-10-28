@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, nativeImage, Menu} = require('electron')
+const {app, BrowserWindow, nativeImage, Menu, Notification} = require('electron')
 const path = require('path')
 
 let mainWindow;
@@ -58,6 +58,12 @@ app.whenReady().then(() => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+
+  const notification = new Notification({title: "the title",body: "the awesome body"});
+  notification.show();
+  notification.on('click', (event, arg)=>{
+    console.log("clicked")
+  });
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
