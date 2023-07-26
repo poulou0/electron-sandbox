@@ -1,6 +1,7 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, nativeImage, Menu, Notification, Tray} = require('electron')
+const {app, BrowserWindow, nativeImage, Menu, Notification, Tray, ipcMain } = require('electron')
 const path = require('path')
+const os = require('os')
 
 let mainWindow;
 
@@ -12,12 +13,12 @@ function createWindow() {
     icon: nativeImage.createFromDataURL('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNk+M9Qz0AEYBxVSF+FAAhKDveksOjmAAAAAElFTkSuQmCC'),
     //icon: __dirname + '/icon.png',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
+      preload: path.join(__dirname, 'preload.js'),
+    },
   })
 
   // and load the index.html of the app.
-  mainWindow.loadFile('index.html');
+  mainWindow.loadFile(path.join(__dirname, 'processes/index.html'));
   // mainWindow.webContents.openDevTools();
 
   const template = [
@@ -40,7 +41,8 @@ function createWindow() {
         {type: 'separator'},
         {role: 'cut'},
         {role: 'copy'},
-        {role: 'paste'}
+        {role: 'paste'},
+        {label: 'Custom', click: (e) => console.log(`Submenu '${e.label}' pressed`)},
       ]
     }
   ];
@@ -62,6 +64,9 @@ let tray;
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  //inter-process communication (IPC)
+  ipcMain.handle('ping', () => `pong,\n\n${JSON.stringify(os.userInfo(), null, "\t")}`);
+
   createWindow();
 
   app.on('activate', function () {
