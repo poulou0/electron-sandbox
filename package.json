@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "My electron playroom",
   "repository": "https://github.com/poulou0/electron-sandbox",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,6 +11,6 @@
   "author": "poulou0",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^15.3.0"
+    "electron": "^25.3.1"
   }
 }

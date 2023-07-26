@@ -1,16 +1,16 @@
-const os = require ('os')
+const { contextBridge, ipcRenderer, BrowserWindow } = require('electron')
 
-// All of the Node.js APIs are available in the preload process.
-// It has the same sandbox as a Chrome extension.
-window.addEventListener('DOMContentLoaded', () => {
-  const replaceText = (selector, text) => {
-    const element = document.getElementById(selector)
-    if (element) element.innerText = text
-  }
+contextBridge.exposeInMainWorld('versions', {
+  node: () => process.versions.node,
+  chrome: () => process.versions.chrome,
+  electron: () => process.versions.electron,
+})
 
-  for (const dependency of ['chrome', 'node', 'electron']) {
-    replaceText(`${dependency}-version`, process.versions[dependency])
-  }
+contextBridge.exposeInMainWorld('env', {
+  username: process.env.USERNAME,
+})
 
-  document.getElementById('username').innerText = os.userInfo().username;
+contextBridge.exposeInMainWorld('toolkit', {
+  //inter-process communication (IPC)
+  ping: () => ipcRenderer.invoke('ping'),
 })
