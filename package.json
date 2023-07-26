@@ -1,16 +1,25 @@
 {
-  "name": "electron-sandbox",
+  "name": "hmmm",
   "version": "0.0.1",
   "description": "My electron playroom",
   "repository": "https://github.com/poulou0/electron-sandbox",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "app:dir": "electron-builder --dir",
+    "app:dist": "electron-builder"
   },
   "author": "poulou0",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^25.3.1"
+    "electron": "^25.3.1",
+    "electron-builder": "^24.6.3"
+  },
+  "build": {
+    "appId": "hmmm",
+    "mac": {
+      "category": "fun"
+    }
   }
 }

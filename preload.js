@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer, BrowserWindow } = require('electron')
+const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('versions', {
   node: () => process.versions.node,
@@ -12,5 +12,5 @@ contextBridge.exposeInMainWorld('env', {
 
 contextBridge.exposeInMainWorld('toolkit', {
   //inter-process communication (IPC)
-  ping: () => ipcRenderer.invoke('ping'),
+  ping: () => ipcRenderer.invoke('openurl'),
 })

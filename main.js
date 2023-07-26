@@ -1,7 +1,6 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, nativeImage, Menu, Notification, Tray, ipcMain } = require('electron')
+const {app, BrowserWindow, nativeImage, Menu, Tray } = require('electron')
 const path = require('path')
-const os = require('os')
 
 let mainWindow;
 
@@ -10,44 +9,15 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    transparent: true,
     icon: nativeImage.createFromDataURL('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNk+M9Qz0AEYBxVSF+FAAhKDveksOjmAAAAAElFTkSuQmCC'),
-    //icon: __dirname + '/icon.png',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-    },
-  })
-
-  // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, 'processes/index.html'));
-  // mainWindow.webContents.openDevTools();
-
-  const template = [
-    {
-      label: 'File',
-      submenu: [
-        {
-          label: 'Exit', click: () => {
-            app.isQuiting = true;
-            app.quit();
-          }
-        }
-      ]
-    },
-    {
-      label: 'Edit',
-      submenu: [
-        {role: 'undo'},
-        {role: 'redo'},
-        {type: 'separator'},
-        {role: 'cut'},
-        {role: 'copy'},
-        {role: 'paste'},
-        {label: 'Custom', click: (e) => console.log(`Submenu '${e.label}' pressed`)},
-      ]
+      preload: path.join(__dirname, 'processes/browser.js'),
     }
-  ];
-  const menu = Menu.buildFromTemplate(template);
-  mainWindow.setMenu(menu);
+  })
+  mainWindow.loadURL('http://poulou.gr/interview.html');
+
+  mainWindow.setMenu(null)
 
   mainWindow.on('close', function (event) {
     if (!app.isQuiting) {
@@ -64,9 +34,6 @@ let tray;
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  //inter-process communication (IPC)
-  ipcMain.handle('ping', () => `pong,\n\n${JSON.stringify(os.userInfo(), null, "\t")}`);
-
   createWindow();
 
   app.on('activate', function () {
@@ -75,11 +42,6 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 
-  const notification = new Notification({title: "the title",body: "the awesome body"});
-  notification.show();
-  notification.on('click', (event, arg)=>{
-    console.log("clicked")
-  });
 
   const icon = nativeImage.createFromDataURL('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNk+M9Qz0AEYBxVSF+FAAhKDveksOjmAAAAAElFTkSuQmCC');
   tray = new Tray(icon);
@@ -93,8 +55,16 @@ app.whenReady().then(() => {
     {
       label: 'always on top',
       type: 'checkbox',
-      click: (v) => {
+      click: () => {
         mainWindow.setAlwaysOnTop(v.checked, 'screen');
+      }
+    },
+    {
+      label: 'clear cache',
+      type: 'checkbox',
+      click: async () => {
+        await mainWindow.webContents.session.clearCache()
+        mainWindow.webContents.reload();
       }
     },
     {type: 'separator'},
