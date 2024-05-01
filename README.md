@@ -16,7 +16,7 @@ https://youtu.be/p8HNTJPIpwY
 https://github.com/AppImage/AppImageKit/releases/latest
 
 ```shell
-npx electron-packager . electron-sandbox --platform=linux --asar && \
+npx @electron/packager . electron-sandbox --platform=linux --asar && \
 
 cd electron-sandbox-linux-x64 && \
 mkdir -p usr/bin && \
@@ -25,16 +25,23 @@ echo "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEAAQAAAAB0CZXLAAAABGdBTUEAALGPC/xhBQAAACBjSF
 printf "#\!/bin/bash\nSELF=\$(readlink -f \"\$0\")\nHERE=\${SELF%%/*}\nexec \"\${HERE}/usr/bin/electron-sandbox\"" > AppRun && \
 chmod +x AppRun && \
 printf "[Desktop Entry]\nName=electron sandbox\nExec=electron-sandbox\nIcon=icon\nType=Application\nCategories=Utility" > electron-sandbox.desktop && \
-wget -N https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage -PO ~/Downloads/ && \
+wget -N https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage -P ~/Downloads/ && \
+chmod +x ~/Downloads/appimagetool-x86_64.AppImage && \
 ARCH=x86_64 ~/Downloads/appimagetool-x86_64.AppImage .
 ```
 
-### Make a MacOS .dmg
+### Make a MacOS .app or .dmg
 
 Run script on macOS
 
 ```shell
-npx electron-packager . electron-sandbox --platform=darwin --asar && \
+echo "iVBORw0KGgoAAAANSUhEUgAAAQAAAAEAAQAAAAB0CZXLAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAnRSTlMAAHaTzTgAAAACYktHRAAB3YoTpAAAAAd0SU1FB+UKHQsLOkszWOoAAAAfSURBVGje7cEBDQAAAMKg909tDjegAAAAAAAAAAC+DSEAAAF/GZynAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDIxLTEwLTI5VDA5OjExOjU4KzAyOjAwD0uR8wAAACV0RVh0ZGF0ZTptb2RpZnkAMjAyMS0xMC0yOVQwOToxMTo1OCswMjowMH4WKU8AAAAASUVORK5CYII=" | base64 --decode > icon.png && \
+npx png2icons icon.png icon -icns -bc -i && \
+npx @electron/packager . electron-sandbox --platform=darwin --asar --icon=icon.icns
+```
+
+Optionally:
+```shell
 cd electron-sandbox-darwin-x64 && \
 npx electron-installer-dmg ./electron-sandbox.app electron-sandbox
 ```
